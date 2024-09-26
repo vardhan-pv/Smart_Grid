@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hybrid Smart Grid System</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ADD8E6 30%, #FFFFFF 100%);
+      color: black;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .home-page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      text-align: center;
+      margin-top: 55px; /* Space from the navigation bar */
+    }
+    h1 {
+      color: black; /* Set all titles to black */
+      font-size: 3em;
+      margin-bottom: 1em;
+      margin-top: 2px; 
+    }
+
+    /* Button Grid with Colorful Tabs */
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1em;
+      width: 80%;
+      max-width: 400px;
+    }
+    .button {
+      background: white;
+      color: black; /* Button text color to black */
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out, background-color 0.3s ease-in-out;
+      font-size: 1.5em;
+      position: relative;
+      overflow: hidden;
+    }
+    .button i {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+    .button p {
+      margin: 0;
+      font-weight: bold;
+    }
+    .button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: opacity 0.5s;
+      opacity: 0;
+    }
+    .button:hover::before {
+      opacity: 1;
+    }
+    .button:hover {
+      transform: scale(1.1);
+      color: white;
+    }
+
+    /* Motor Button */
+    .button.motor {
+      background: linear-gradient(45deg, #ff4e50, #f9d423); /* Gradient from red to yellow */
+    }
+    /* CNG Button */
+    .button.cng {
+      background: linear-gradient(45deg, #4ac29a, #bdfff3); /* Gradient from green to light blue */
+    }
+    /* Solar Button */
+    .button.solar {
+      background: linear-gradient(45deg, #ff512f, #f09819); /* Gradient from orange to yellow */
+    }
+    /* Help Button */
+    .button.help {
+      background: linear-gradient(45deg, #3498db, #8e44ad); /* Gradient from blue to purple */
+    }
+    /* Colorful Navigation Bar */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(45deg, #ff6f61, #ffba49, #f7ea00, #04e762, #00a9f4, #fd3a69);
+      background-size: 600%;
+      padding: 15px;
+      display: flex;
+      justify-content: space-around;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      animation: gradient 10s ease infinite;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .top-nav a {
+      color: white;
+      font-size: 1.5em;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+    .top-nav a:hover {
+      transform: scale(1.2);
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Other pages */
+    .motor-control, .solar-data, .cng-data, .help-page, .login-page, .register-page {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding-top: 80px;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .circular-button {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      color: white;
+      margin: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+    .on-button {
+      background-color: green;
+    }
+    .off-button {
+      background-color: red;
+    }
+    .info {
+      margin-top: 20px;
+      color: #1E90FF; /* Info text color can remain different if desired */
+      font-size: 1.2em;
+    }
+
+    .table-container {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 600px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #1E90FF;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #1E90FF;
+      color: white;
+    }
+
+    /* Login and Registration Styles */
+    body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url('https://www.imghippo.com/i/jWHE31727208813.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 400px;
+    text-align: left;
+    border: 5px solid transparent; /* Create space for the gradient */
+    background-image: linear-gradient(white, white), linear-gradient(to right, #ff6a00, #ee0979); /* Gradient outline */
+    background-clip: padding-box, border-box; /* Ensure the background fills the padding */
+    position: relative; /* Required for pseudo-elements */
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9800; /* Orange color */
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #e68a00; /* Darker shade on hover */
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.social-login {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.checkbox-container input {
+    margin-right: 10px;
+}
+
+    .help-list {
+      margin-top: 05px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 1px;
+      padding: 15px;
+    }
+    .help-list h2 {
+      margin: 0;
+      color: #1E90FF;
+    }
+    .help-list p {
+      margin: 5px 0;
+      color: black; /* Help list text to black */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Colorful Navigation Bar -->
+  <div class="top-nav">
+    <a href="javascript:void(0)" onclick="showLoginPage()">Login</a>
+    <a href="javascript:void(0)" onclick="showRegisterPage()">Register</a>
+    <a href="javascript:void(0)" onclick="showHomePage()">Home</a>
+  </div>
+
+  <!-- Login Page -->
+
+  <div class="container login-page">
+    <img src="https://i.imghippo.com/files/jWHE31727208813.png">
+    <h1>Login</h1>
+    <div class="form-container">
+      <input type="text" id="serialNumber" placeholder="Serial Number" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <div class="forgot-password"><a href="#">Forgot Password?</a></div>
+      <button onclick="login()">Login</button>
+    </div>
+  </div>
+
+  <!-- Registration Page -->
+  <div class="container register-page">
+    <img src="https://i.imghippo.com/files/jWHE31727208813.png">
+    <h1>Register</h1>
+    <div class="form-container">
+      <input type="text" id="regName" placeholder="Name" required>
+      <input type="text" id="regNumber" placeholder="Number" required>
+      <input type="email" id="regEmail" placeholder="Email" required>
+      <input type="password" id="regPassword" placeholder="Password" required>
+      <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+      <label><input type="checkbox" id="terms" required> Accept Terms and Conditions</label>
+      <button onclick="register()">Create an Account</button>
+    </div>
+  </div>
+
+  <!-- Home Page -->
+  <div class="container home-page">
+    <img src="https://i.imghippo.com/files/jWHE31727208813.png">
+    <h1>Hybrid Smart Grid System</h1>
+    <div class="button-grid">
+      <div class="button motor" onclick="showMotorControl()"> 
+        <i class="fas fa-bolt"></i>
+        <p>Motor</p>
+      </div>
+      <div class="button cng" onclick="showCngData()"> 
+        <i class="fas fa-gas-pump"></i>
+        <p>CNG</p>
+      </div>
+      <div class="button solar" onclick="showSolarData()"> 
+        <i class="fas fa-solar-panel"></i>
+        <p>Solar</p>
+      </div>
+      <div class="button help" onclick="showHelpPage()"> 
+        <i class="fas fa-question-circle"></i>
+        <p>Help</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Motor Control Page -->
+  <div class="container motor-control">
+    <img src="https://i.imghippo.com/files/jWHE31727208813.png">
+    <h1>Motor Control</h1>
+    <div class="button-container">
+      <div class="circular-button on-button" onclick="controlMotor('on')">ON</div>
+      <div class="circular-button off-button" onclick="controlMotor('off')">OFF</div>
+    </div>
+    <div class="info">
+      <p>Power Status: <span id="powerStatus">OFF</span></p>
+      <p>Energy Consumption: <span id="energyConsumption">0 kWh</span></p>
+      <p>Time: <span id="currentTime"></span></p>
+    </div>
+  </div>
+
+  <!-- CNG Data Page -->
+  <div class="container cng-data">
+    <img src="https://i.imghippo.com/files/jWHE31727208813.png">
+    <h1>CNG Power Data Page</h1>
+    <i class="fas fa-gas-pump" style="font-size: 3em; color: #1E90FF;"></i>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>CNG Power Generated (kWh)</th>
+            <th>Fuel Used (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2024-09-01</td>
+            <td>18.5</td>
+            <td>12.0</td>
+          </tr>
+          <tr>
+            <td>2024-09-02</td>
+            <td>16.7</td>
+            <td>11.2</td>
+          </tr>
+          <tr>
+            <td>2024-09-03</td>
+            <td>17.2</td>
+            <td>11.8</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info">
+      <p>Fuel Level: <span id="fuelLevel">50%</span></p>
+    </div>
+  </div>
+
+  <!-- Solar Data Page -->
+  <div class="container solar-data">
+    <img src="https://i.imghippo.com/files/jWHE31727208813.png">
+    <h1>Solar Power Data Page</h1>
+    <i class="fas fa-solar-panel" style="font-size: 3em; color: #1E90FF;"></i>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Power Generated (kWh)</th>
+            <th>Power Used (kWh)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2024-09-01</td>
+            <td>15.2</td>
+            <td>10.5</td>
+          </tr>
+          <tr>
+            <td>2024-09-02</td>
+            <td>13.8</td>
+            <td>8.0</td>
+          </tr>
+          <tr>
+            <td>2024-09-03</td>
+            <td>14.5</td>
+            <td>9.3</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info">
+      <p>Battery Storage: <span id="batteryStorage">75%</span></p>
+    </div>
+  </div>
+
+  <!-- Help Page -->
+  <div class="container help-page">
+    <img src="https://i.imghippo.com/files/jWHE31727208813.png">
+    <h1>Help</h1>
+    <div class="help-list">
+      <h2>Common Issues</h2>
+      <p>Issue 1: Motor not starting</p>
+      <p>Solution: Check the power supply and connection.</p>
+      <p>Issue 2: Low CNG level</p>
+      <p>Solution: Refill CNG tank.</p>
+      <p>Issue 3: Solar not generating power</p>
+      <p>Solution: Ensure solar panels are clean and unobstructed.</p>
+    </div>
+  </div>
+
+  <script>
+    const users = [
+      { serialNumber: '123456789', password: 'Vardhan@123' }
+    ];
+
+    let loggedInUser = null;
+
+    function showLoginPage() {
+      document.querySelector('.login-page').style.display = 'flex';
+      document.querySelector('.register-page').style.display = 'none';
+      document.querySelector('.home-page').style.display = 'none';
+      document.querySelector('.motor-control').style.display = 'none';
+      document.querySelector('.cng-data').style.display = 'none';
+      document.querySelector('.solar-data').style.display = 'none';
+      document.querySelector('.help-page').style.display = 'none';
+    }
+
+    function showRegisterPage() {
+      document.querySelector('.login-page').style.display = 'none';
+      document.querySelector('.register-page').style.display = 'flex';
+      document.querySelector('.home-page').style.display = 'none';
+      document.querySelector('.motor-control').style.display = 'none';
+      document.querySelector('.cng-data').style.display = 'none';
+      document.querySelector('.solar-data').style.display = 'none';
+      document.querySelector('.help-page').style.display = 'none';
+    }
+
+    function showHomePage() {
+      document.querySelector('.login-page').style.display = 'none';
+      document.querySelector('.register-page').style.display = 'none';
+      document.querySelector('.home-page').style.display = 'flex';
+      document.querySelector('.motor-control').style.display = 'none';
+      document.querySelector('.cng-data').style.display = 'none';
+      document.querySelector('.solar-data').style.display = 'none';
+      document.querySelector('.help-page').style.display = 'none';
+    }
+
+    function login() {
+      const serialNumber = document.getElementById('serialNumber').value;
+      const password = document.getElementById('password').value;
+      const user = users.find(user => user.serialNumber === serialNumber && user.password === password);
+
+      if (user) {
+        loggedInUser = user;
+        alert('Login successful!');
+        showHomePage();
+      } else {
+        alert('Invalid serial number or password.');
+      }
+    }
+
+    function register() {
+      const name = document.getElementById('regName').value;
+      const number = document.getElementById('regNumber').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const confirmPassword = document.getElementById('regConfirmPassword').value;
+      const termsAccepted = document.getElementById('terms').checked;
+
+      if (password === confirmPassword && termsAccepted) {
+        const newUser = { serialNumber: number, password: password };
+        users.push(newUser);
+        alert('Registration successful! You can now log in.');
+        showLoginPage();
+      } else {
+        alert('Please check your inputs.');
+      }
+    }
+
+    function showMotorControl() {
+      document.querySelector('.motor-control').style.display = 'flex';
+      document.querySelector('.home-page').style.display = 'none';
+      document.querySelector('.cng-data').style.display = 'none';
+      document.querySelector('.solar-data').style.display = 'none';
+      document.querySelector('.help-page').style.display = 'none';
+    }
+
+    function toggleMotor(state) {
+      const motorStatus = document.getElementById('motorStatus');
+      if (state === 'on') {
+        motorStatus.innerText = 'Motor is ON';
+      } else {
+        motorStatus.innerText = 'Motor is OFF';
+      }
+    }
+
+    function showCngData() {
+      document.querySelector('.cng-data').style.display = 'flex';
+      document.querySelector('.home-page').style.display = 'none';
+      document.querySelector('.motor-control').style.display = 'none';
+      document.querySelector('.solar-data').style.display = 'none';
+      document.querySelector('.help-page').style.display = 'none';
+    }
+
+    function showSolarData() {
+      document.querySelector('.solar-data').style.display = 'flex';
+      document.querySelector('.home-page').style.display = 'none';
+      document.querySelector('.motor-control').style.display = 'none';
+      document.querySelector('.cng-data').style.display = 'none';
+      document.querySelector('.help-page').style.display = 'none';
+    }
+
+    function showHelpPage() {
+      document.querySelector('.help-page').style.display = 'flex';
+      document.querySelector('.home-page').style.display = 'none';
+      document.querySelector('.motor-control').style.display = 'none';
+      document.querySelector('.cng-data').style.display = 'none';
+      document.querySelector('.solar-data').style.display = 'none';
+    }
+
+    // Start by showing the login page
+    showLoginPage();
+  </script>
+</body>
+</html>
+
+
