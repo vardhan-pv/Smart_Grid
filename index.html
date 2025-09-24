@@ -578,7 +578,16 @@ button:hover {
     // Start by showing the login page
     showLoginPage();
   </script>
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+<script type="module">
+  import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+  createChat({
+    webhookUrl: 'https://vragents.app.n8n.cloud/webhook/cce69636-df45-4ae6-8191-b7dae4075483/chatt' // <-- replace with your n8n webhook
+  });
+</script>
 </body>
 </html>
+
 
 
